@@ -1,12 +1,30 @@
+---
+title: "Kutbay - HW 4"
+author: "Sara Kutbay"
+date: "April 10, 2017"
+output: html_document
+---
+
+#Import the data set
+```{R}
 getwd()
 setwd("C:/Users/SK030875/Desktop/MBA/BUS6301/Week4/data")
+```
 
+
+#Install packages
+```{r}
 install.packages("arules", lib="/Users/SK030875/Desktop/MBA/BUS6301/Packages/")
+```
+
+
+```{r}
 library(arules, lib.loc="/Users/SK030875/Desktop/MBA/BUS6301/Packages/")
 bookbaskets <- read.transactions("bookdata.tsv.gz", format="single",  	# Note: 2 
                                  sep="\t",                    	# Note: 3 
                                  cols=c("userid", "title"),    	# Note: 4 
                                  rm.duplicates=T)       	# Note: 5
+```
 
 # Note 1: 
 #   Load the arules package. 
@@ -46,4 +64,3 @@ bookbasket_use<-bookbaskets[basketSizes>1] #Only keep transactions with more tha
 bookbasket_use
 ####
 #start your code here.
-
