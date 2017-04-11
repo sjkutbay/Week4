@@ -1,0 +1,11 @@
+"rules","support","confidence","lift"
+"{The Red Tent,Where The Heart Is} => {While I Was Gone}",0.00120033315369164,0.515789473684211,54.9753469836471
+"{The Notebook,White Oleander : A Novel} => {Message in a Bottle}",0.00134731272353143,0.518867924528302,48.4696256638314
+"{Divine Secrets of the Ya-Ya Sisterhood: A Novel,Life of Pi} => {Good in Bed}",0.00115133996374504,0.522222222222222,47.4791883197228
+"{A Painted House,Life of Pi} => {Good in Bed}",0.00112684336877174,0.505494505494505,45.9583445507722
+"{Snow Falling on Cedars,Where The Heart Is} => {The Pilot's Wife : A Novel}",0.00132281612855813,0.524271844660194,42.6331180133834
+"{She's Come Undone,The Lovely Bones: A Novel,The Secret Life of Bees} => {Wild Animus}",0.00102885698887855,0.56,11.5397879858657
+"{She's Come Undone,The Lovely Bones: A Novel,The Nanny Diaries: A Novel} => {Wild Animus}",0.00102885698887855,0.538461538461538,11.0959499864093
+"{A Painted House,The Red Tent} => {Wild Animus}",0.00107785017882514,0.523809523809524,10.7940193745343
+"{Snow Falling on Cedars,Where The Heart Is} => {Wild Animus}",0.00127382293861153,0.504854368932039,10.4034149664531
+"{A Painted House,Snow Falling on Cedars} => {Wild Animus}",0.00129831953358483,0.504761904761905,10.4015095790967

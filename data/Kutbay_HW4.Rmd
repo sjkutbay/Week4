@@ -1,0 +1,120 @@
+---
+title: "Kutbay HW 4"
+author: "Sara Kutbay"
+date: "April 10, 2017"
+output: html_document
+---
+
+#Problem:  
+With the summer season approaching, the owner of the bookstore Flourish and Blotts wants to ensure that his display cases are filled with books that are both popular and related.  While there is data on over 90,000 transactions, no analysis has been done to decipher which books should be paired together in displays to increase purchases.
+
+
+#Objective:  
+Find the most popular books and any sets of books that are frequently purchased together in order to provide the book store owner with accurate information on how to arrange his display cases.  Additionally, we must honor any requests that the store owner has made regarding what he would or would not like to display.
+
+
+#Assumptions: 
+When considering creating a display that appeals to book club members, I would make the assumption that these members prefer books that are uplifting, heart-warming, and contain subject matter that can be openly discussed and related to their lives.  Therefore, any books that are obviously vulgur or in the genres of horror or thrillers should be excluded from these displays.  We are looking for related or popular books that fall into the category described.  Additionally, we do not want to insult the book store owners intelligence by suggesting books in a series, which he knows should be displayed together, and he has requested that we do not include Wild Animus.
+
+
+#Analysis: 
+I began by finding the most frequent book purchases within the data set. After eliminating Wild Animus and books in series, I had a list of the 14 most popular books in the data.  I used the apriori model to look for rules containing these titles with 50% confidence and 1% support (these parameters were pruned until an appropriate amount of rules returned).  This model gave me 10 rules to work with.  I sorted the rules by lift and confidence and based my recommedations on the top results.
+
+
+#Install packages
+install.packages("arules", lib="/Users/SK030875/Desktop/MBA/BUS6301/Packages/")
+
+
+#Set working directory
+```{r}
+getwd()
+setwd("C:/Users/SK030875/Desktop/MBA/BUS6301/Week4/data")
+```
+
+
+#Read in the data and manipulate to use in further analysis
+```{r}
+library(arules, lib.loc="/Users/SK030875/Desktop/MBA/BUS6301/Packages/")
+bookbaskets <- read.transactions("bookdata.tsv.gz", format="single",  	# Note: 2 
+                                 sep="\t",                    	# Note: 3 
+                                 cols=c("userid", "title"),    	# Note: 4 
+                                 rm.duplicates=T)       	# Note: 5
+
+basketSizes<-size(bookbaskets) #Calculate number of books purchased by "userID"
+
+bookFreq<-itemFrequency(bookbaskets) #Calculate the support for each book title 
+
+bookCount <- (bookFreq/sum(bookFreq))*sum(basketSizes) #Get the absolute count of book occurrences. 
+
+bookbasket_use<-bookbaskets[basketSizes>1] #Only keep transactions with more than one book purchased. 
+
+bookbasket_use
+```
+
+
+#Plot the 20 most popular books
+```{r}
+itemFrequencyPlot(bookbasket_use, topN = 20)
+```
+
+We can now see the 20 most popular books in the graph agove.  We should use these books in our display cases, but remove any books in a series and the book Wild Animus per the store owners request.
+
+
+#Find any frequent patterns in the data using the apriori model
+```{r}
+bookrules <- apriori(bookbasket_use)
+```
+
+ rules found.
+
+
+#Try decreasing support and increasing minlen.  Also, we want to look for connections with the popular books found above that are not in a series or Wild Animus
+```{r}
+bookrules <- apriori(bookbasket_use, parameter = list(support = 0.001, confidence = 0.5, minlen = 2)
+                   , appearance = list(lhs = c("The Lovely Bones: A Novel"
+                                             , "She's Come Undone"
+                                             , "The Nanny Diaries: A Novel"
+                                             , "A Painted House"
+                                             , "Bridget Jones's Diary"
+                                             , "The Secret Life of Bees"
+                                             , "Divine Secrets of the Ya-Ya Sisterhood: A Novel"
+                                             , "The Red Tent"
+                                             , "White Oleander : A Novel"
+                                             , "Life of Pi"
+                                             , "Snow Falling on Cedars"
+                                             , "Girl with a Pearl Earring"
+                                             , "Where The Heart Is"
+                                             , "The Notebook"), default = "rhs"))
+```
+
+
+#View rules
+```{r}
+summary(bookrules)
+```
+
+There are many rules with 3-items.  This could hint that the store owner should group books by threes.
+
+
+#Sort by lift and confidence, then write out to a csv file in order to view better
+```{r}
+bookrules_sorted <-sort(bookrules, by = c("lift", "confidence"))
+write(bookrules_sorted, file = "C:/Users/SK030875/Desktop/MBA/BUS6301/Week4/data/bookrules10.csv",
+      sep = ",", quote = TRUE, row.names = FALSE)
+```
+
+
+#View for markdown file
+```{r}
+inspect(bookrules_sorted)
+```
+
+
+#Recommendations:
+1.  Display "The Red Tent", "Where The Heart Is", and "While I Was Gone" together.  This combination of books contains 2 of the most popular books and also contains a book that is already on Oprah's book club list ("While I Was Gone").  Additionally, this rule has the highest lift from the data set, with customers being 55 times more likely to buy the books in combination than alone.  The combination of these 3 books should encourage book club members to purchase all 3 together when seeing them in the display, which would increase the sales of all 3 books.
+2.  Another solid combination is "The Notebook", "White Oleander : A Novel", and "Message in a Bottle".  These books are 48 times more likely to be bought together than alone, and should increase sales for the book owner.
+3.  The last combination to use is "Snow Falling on Cedars", "Where The Heart Is", and "The Pilot's Wife : A Novel".  Again, this combination has strong lift and confidence.
+
+
+Note: I did not include combinations with the book "Good in Bed" because of the previous assumption made that these books should be appropriate for book club discussion.  After researching this book, I did not feel that it fell into this category.
+
